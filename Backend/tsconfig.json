@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "rootDir": "./src",
     "outDir": "./dist",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "node16",
+    "moduleResolution": "node16",
     "target": "esnext",
     "types": ["node"],
     "sourceMap": true,
     "declaration": true,
     "strict": true,
-    "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "skipLibCheck": true
