@@ -1,121 +1,86 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import FilterPanel from './components/FilterPanel'
+import MovieCard from './components/MovieCard'
 import './App.css'
 
+export interface Movie {
+  id: number
+  title: string
+  overview: string
+  poster_path: string | null
+  backdrop_path: string | null
+  release_date: string
+  vote_average: number
+  vote_count: number
+  genre_ids: number[]
+}
+
+export interface Filters {
+  genres: string
+  yearFrom: string
+  yearTo: string
+  minRating: string
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [movie, setMovie] = useState<Movie | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [filters, setFilters] = useState<Filters>({
+    genres: '',
+    yearFrom: '1990',
+    yearTo: '2024',
+    minRating: '6',
+  })
+
+  async function fetchRandomMovie() {
+    setLoading(true)
+    setError(null)
+
+    const params = new URLSearchParams()
+    if (filters.genres) params.append('genres', filters.genres)
+    if (filters.yearFrom) params.append('yearFrom', filters.yearFrom)
+    if (filters.yearTo) params.append('yearTo', filters.yearTo)
+    if (filters.minRating) params.append('minRating', filters.minRating)
+
+    try {
+      const res = await fetch(`http://localhost:3333/random?${params.toString()}`)
+      if (!res.ok) {
+        const data = await res.json() as { error: string }
+        throw new Error(data.error)
+      }
+      const data = await res.json() as Movie
+      setMovie(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
+    <div className="app">
+      <header className="header">
+        <h1 className="logo">🎬</h1>
+      </header>
+
+      <main className="main">
+        {/* Props cast to any to match FilterPanel props shape in external file */}
+        <FilterPanel {...({ filters, onChange: setFilters } as any)} />
+
         <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+          className="spin-btn"
+          onClick={fetchRandomMovie}
+          disabled={loading}
         >
-          Count is {count}
+          {loading ? 'Sorteando...' : '🎲 Sortear filme'}
         </button>
-      </section>
 
-      <div className="ticks"></div>
+        {error && <p className="error">{error}</p>}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        {movie && !loading && <MovieCard movie={movie} />}
+      </main>
+    </div>
   )
 }
 
