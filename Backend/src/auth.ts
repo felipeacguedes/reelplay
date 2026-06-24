@@ -12,7 +12,7 @@ export async function requireAuth(request: FastifyRequest, reply: FastifyReply) 
   const authHeader = request.headers.authorization
 
   if (!authHeader?.startsWith('Bearer ')) {
-    return reply.status(401).send({ error: 'Token nao fornecido.' })
+    return reply.status(401).send({ error: 'Token não fornecido.' })
   }
 
   const token = authHeader.split(' ')[1]!
@@ -22,11 +22,11 @@ export async function requireAuth(request: FastifyRequest, reply: FastifyReply) 
     const user = await db.user.findUnique({ where: { id: payload.userId } })
 
     if (!user) {
-      return reply.status(401).send({ error: 'Usuario nao encontrado.' })
+      return reply.status(401).send({ error: 'Usuário não encontrado.' })
     }
 
     ;(request as FastifyRequest & { user: typeof user }).user = user
   } catch {
-    return reply.status(401).send({ error: 'Token invalido.' })
+    return reply.status(401).send({ error: 'Token inválido.' })
   }
 }

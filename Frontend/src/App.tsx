@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import FilterPanel from './components/FilterPanel'
 import MovieCard from './components/MovieCard'
-import Header from './components/Header.tsx'
-import WatchlistPage from './pages/WatchlistPage.tsx'
+import Header from './components/Header'
+import WatchlistPage from './pages/WatchlistPage'
+import LoginPage from './pages/LoginPage'
 import './App.css'
 
 export interface Movie {
@@ -30,45 +31,7 @@ export interface AuthUser {
   name: string | null
 }
 
-const API = 'http://localhost:3333'
-
-export function useAuth() {
-  const [user, setUser] = useState<AuthUser | null>(null)
-  const [token, setToken] = useState<string | null>(null)
-
-  useEffect(() => {
-    const savedToken = localStorage.getItem('reelplay_token')
-    const savedUser = localStorage.getItem('reelplay_user')
-    if (savedToken && savedUser && savedUser !== 'undefined') {
-      setToken(savedToken)
-      setUser(JSON.parse(savedUser) as AuthUser)
-    }
-  }, [])
-
-  async function login(username: string) {
-    const res = await fetch(`${API}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username }),
-    })
-    const data = await res.json() as { token: string; user: AuthUser }
-    setToken(data.token)
-    setUser(data.user)
-    localStorage.setItem('reelplay_token', data.token)
-    localStorage.setItem('reelplay_user', JSON.stringify(data.user))
-  }
-
-  function logout() {
-    setToken(null)
-    setUser(null)
-    localStorage.removeItem('reelplay_token')
-    localStorage.removeItem('reelplay_user')
-  }
-
-  return { user, token, login, logout }
-}
-
-export { API }
+export const API = 'http://localhost:3333'
 
 function HomePage({ user, token }: { user: AuthUser | null; token: string | null }) {
   const [movie, setMovie] = useState<Movie | null>(null)
@@ -177,14 +140,39 @@ function HomePage({ user, token }: { user: AuthUser | null; token: string | null
 }
 
 function App() {
-  const auth = useAuth()
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [token, setToken] = useState<string | null>(null)
+
+  useEffect(() => {
+    const savedToken = localStorage.getItem('reelplay_token')
+    const savedUser = localStorage.getItem('reelplay_user')
+    if (savedToken && savedUser && savedUser !== 'undefined') {
+      setToken(savedToken)
+      setUser(JSON.parse(savedUser) as AuthUser)
+    }
+  }, [])
+
+  function handleLogin(newUser: AuthUser, newToken: string) {
+    setUser(newUser)
+    setToken(newToken)
+    localStorage.setItem('reelplay_token', newToken)
+    localStorage.setItem('reelplay_user', JSON.stringify(newUser))
+  }
+
+  function handleLogout() {
+    setUser(null)
+    setToken(null)
+    localStorage.removeItem('reelplay_token')
+    localStorage.removeItem('reelplay_user')
+  }
 
   return (
     <div className="app">
-      <Header user={auth.user} token={auth.token} login={auth.login} logout={auth.logout} />
+      <Header user={user} token={token} logout={handleLogout} />
       <Routes>
-        <Route path="/" element={<HomePage user={auth.user} token={auth.token} />} />
-        <Route path="/watchlist" element={<WatchlistPage token={auth.token} />} />
+        <Route path="/" element={<HomePage user={user} token={token} />} />
+        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        <Route path="/watchlist" element={<WatchlistPage token={token} />} />
       </Routes>
     </div>
   )

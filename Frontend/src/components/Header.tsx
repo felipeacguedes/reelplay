@@ -1,23 +1,14 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import type { AuthUser } from '../App'
 
 interface Props {
   user: AuthUser | null
   token: string | null
-  login: (username: string) => Promise<void>
   logout: () => void
 }
 
-function Header({ user, login, logout }: Props) {
-  async function handleLogin() {
-    const username = prompt('Digite seu username:')
-    if (!username?.trim()) return
-    try {
-      await login(username.trim())
-    } catch {
-      alert('Erro ao fazer login.')
-    }
-  }
+function Header({ user, logout }: Props) {
+  const navigate = useNavigate()
 
   return (
     <header className="header">
@@ -34,7 +25,7 @@ function Header({ user, login, logout }: Props) {
                 <button className="auth-btn" onClick={logout}>Sair</button>
               </div>
             ) : (
-              <button className="auth-btn" onClick={handleLogin}>Entrar</button>
+              <button className="auth-btn" onClick={() => navigate('/login')}>Entrar</button>
             )}
           </div>
         </nav>
