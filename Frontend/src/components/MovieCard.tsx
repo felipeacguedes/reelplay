@@ -1,12 +1,14 @@
+import type { ReactNode } from 'react'
 import type { Movie } from '../App'
 
 interface Props {
   movie: Movie
+  children?: ReactNode
 }
 
 const POSTER_BASE = 'https://image.tmdb.org/t/p/w342'
 
-function MovieCard({ movie }: Props) {
+function MovieCard({ movie, children }: Props) {
   const year = movie.release_date ? movie.release_date.slice(0, 4) : '—'
   const rating = movie.vote_average ? movie.vote_average.toFixed(1) : '—'
 
@@ -35,14 +37,17 @@ function MovieCard({ movie }: Props) {
           {movie.overview || 'Sinopse não disponível.'}
         </p>
 
-        <a
-          className="movie-link"
-          href={`https://www.themoviedb.org/movie/${movie.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Ver no TMDB →
-        </a>
+        <div className="movie-actions">
+          <a
+            className="movie-link"
+            href={`https://www.themoviedb.org/movie/${movie.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ver no TMDB →
+          </a>
+          {children}
+        </div>
       </div>
     </div>
   )

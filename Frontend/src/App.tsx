@@ -51,6 +51,23 @@ function App() {
       }
       const data = await res.json() as Movie
       setMovie(data)
+
+      // Salva no histórico se estiver logado
+      const token = await getToken()
+      if (token) {
+        await fetch('http://localhost:3333/history', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            tmdbId: data.id,
+            title: data.title,
+            posterPath: data.poster_path,
+          }),
+        })
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro desconhecido.')
     } finally {
@@ -58,15 +75,57 @@ function App() {
     }
   }
 
+  async function addToWatchlist() {
+    if (!movie) return
+    const token = await getToken()
+    if (!token) return
+
+    try {
+      const res = await fetch('http://localhost:3333/watchlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          tmdbId: movie.id,
+          title: movie.title,
+          posterPath: movie.poster_path,
+        }),
+      })
+
+      if (res.status === 409) {
+        alert('Filme já está na sua watchlist.')
+        return
+      }
+
+      alert('Adicionado à watchlist!')
+    } catch {
+      alert('Erro ao adicionar à watchlist.')
+    }
+  }
+
   return (
     <div className="app">
       <header className="header">
-        <h1 className="logo">🎬</h1>
+        <div className="header-top">
+          <h1 className="logo">🎬 Reelplay</h1>
+          <div className="auth-area">
+            <Show when="signed-out">
+              <SignInButton mode="modal">
+                <button className="auth-btn">Entrar</button>
+              </SignInButton>
+            </Show>
+            <Show when="signed-in">
+              <UserButton />
+            </Show>
+          </div>
+        </div>
+        <p className="tagline">Seu próximo filme favorito, sorteado.</p>
       </header>
 
       <main className="main">
-        {/* Props cast to any to match FilterPanel props shape in external file */}
-        <FilterPanel {...({ filters, onChange: setFilters } as any)} />
+        <FilterPanel filters={filters} onChange={setFilters} />
 
         <button
           className="spin-btn"
@@ -78,7 +137,15 @@ function App() {
 
         {error && <p className="error">{error}</p>}
 
-        {movie && !loading && <MovieCard movie={movie} />}
+        {movie && !loading && (
+          <MovieCard movie={movie}>
+            <Show when="signed-in">
+              <button className="watchlist-btn" onClick={addToWatchlist}>
+                + Watchlist
+              </button>
+            </Show>
+          </MovieCard>
+        )}
       </main>
     </div>
   )

@@ -213,3 +213,54 @@ body {
     height: 260px;
   }
 }
+
+/* Auth */
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.auth-area {
+  display: flex;
+  align-items: center;
+}
+
+.auth-btn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #f0f0f0;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.auth-btn:hover {
+  border-color: #e50914;
+}
+
+/* Movie actions */
+.movie-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.watchlist-btn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #f0f0f0;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.watchlist-btn:hover {
+  border-color: #e50914;
+  color: #e50914;
+}

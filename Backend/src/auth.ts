@@ -4,6 +4,7 @@ import db from './db'
 
 const clerk = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY,
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
 })
 
 export async function requireAuth(request: FastifyRequest, reply: FastifyReply) {
@@ -13,14 +14,23 @@ export async function requireAuth(request: FastifyRequest, reply: FastifyReply) 
     return reply.status(401).send({ error: 'Token não fornecido.' })
   }
 
-  const token = authHeader.split(' ')[1]
+  const token = authHeader.split(' ')[1]!
 
   try {
-    const payload = await clerk.verifyToken(token!)
+    const requestState = await clerk.authenticateRequest(
+      new Request(`http://localhost:3333${request.url}`, {
+        method: request.method,
+        headers: request.headers as HeadersInit,
+      }),
+      { headerToken: token }
+    )
 
-    const clerkId = payload.sub
+    if (!requestState.isSignedIn) {
+      return reply.status(401).send({ error: 'Não autenticado.' })
+    }
 
-    // Busca ou cria o usuário no banco
+    const clerkId = requestState.toAuth().userId!
+
     let user = await db.user.findUnique({ where: { clerkId } })
 
     if (!user) {
@@ -34,9 +44,9 @@ export async function requireAuth(request: FastifyRequest, reply: FastifyReply) 
       })
     }
 
-    // Injeta o usuário na request para as rotas usarem
     ;(request as FastifyRequest & { user: typeof user }).user = user
-  } catch {
+  } catch (err) {
+    console.error('Erro ao verificar token:', err)
     return reply.status(401).send({ error: 'Token inválido.' })
   }
 }
