@@ -1,6 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import FilterPanel from './components/FilterPanel'
 import MovieCard from './components/MovieCard'
+import Header from './components/Header.tsx'
+import WatchlistPage from './pages/WatchlistPage.tsx'
 import './App.css'
 
 export interface Movie {
@@ -22,7 +25,52 @@ export interface Filters {
   minRating: string
 }
 
-function App() {
+export interface AuthUser {
+  id: string
+  name: string | null
+}
+
+const API = 'http://localhost:3333'
+
+export function useAuth() {
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [token, setToken] = useState<string | null>(null)
+
+  useEffect(() => {
+    const savedToken = localStorage.getItem('reelplay_token')
+    const savedUser = localStorage.getItem('reelplay_user')
+    if (savedToken && savedUser && savedUser !== 'undefined') {
+      setToken(savedToken)
+      setUser(JSON.parse(savedUser) as AuthUser)
+    }
+  }, [])
+
+  async function login(username: string) {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username }),
+    })
+    const data = await res.json() as { token: string; user: AuthUser }
+    setToken(data.token)
+    setUser(data.user)
+    localStorage.setItem('reelplay_token', data.token)
+    localStorage.setItem('reelplay_user', JSON.stringify(data.user))
+  }
+
+  function logout() {
+    setToken(null)
+    setUser(null)
+    localStorage.removeItem('reelplay_token')
+    localStorage.removeItem('reelplay_user')
+  }
+
+  return { user, token, login, logout }
+}
+
+export { API }
+
+function HomePage({ user, token }: { user: AuthUser | null; token: string | null }) {
   const [movie, setMovie] = useState<Movie | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -44,7 +92,7 @@ function App() {
     if (filters.minRating) params.append('minRating', filters.minRating)
 
     try {
-      const res = await fetch(`http://localhost:3333/random?${params.toString()}`)
+      const res = await fetch(`${API}/random?${params.toString()}`)
       if (!res.ok) {
         const data = await res.json() as { error: string }
         throw new Error(data.error)
@@ -52,10 +100,8 @@ function App() {
       const data = await res.json() as Movie
       setMovie(data)
 
-      // Salva no histórico se estiver logado
-      const token = await getToken()
       if (token) {
-        await fetch('http://localhost:3333/history', {
+        await fetch(`${API}/history`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -76,12 +122,10 @@ function App() {
   }
 
   async function addToWatchlist() {
-    if (!movie) return
-    const token = await getToken()
-    if (!token) return
+    if (!movie || !token) return
 
     try {
-      const res = await fetch('http://localhost:3333/watchlist', {
+      const res = await fetch(`${API}/watchlist`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,47 +150,42 @@ function App() {
   }
 
   return (
+    <main className="main">
+      <FilterPanel filters={filters} onChange={setFilters} />
+
+      <button
+        className="spin-btn"
+        onClick={fetchRandomMovie}
+        disabled={loading}
+      >
+        {loading ? 'Sorteando...' : '🎲 Sortear filme'}
+      </button>
+
+      {error && <p className="error">{error}</p>}
+
+      {movie && !loading && (
+        <MovieCard movie={movie}>
+          {user && (
+            <button className="watchlist-btn" onClick={addToWatchlist}>
+              + Watchlist
+            </button>
+          )}
+        </MovieCard>
+      )}
+    </main>
+  )
+}
+
+function App() {
+  const auth = useAuth()
+
+  return (
     <div className="app">
-      <header className="header">
-        <div className="header-top">
-          <h1 className="logo">🎬 Reelplay</h1>
-          <div className="auth-area">
-            <Show when="signed-out">
-              <SignInButton mode="modal">
-                <button className="auth-btn">Entrar</button>
-              </SignInButton>
-            </Show>
-            <Show when="signed-in">
-              <UserButton />
-            </Show>
-          </div>
-        </div>
-        <p className="tagline">Seu próximo filme favorito, sorteado.</p>
-      </header>
-
-      <main className="main">
-        <FilterPanel filters={filters} onChange={setFilters} />
-
-        <button
-          className="spin-btn"
-          onClick={fetchRandomMovie}
-          disabled={loading}
-        >
-          {loading ? 'Sorteando...' : '🎲 Sortear filme'}
-        </button>
-
-        {error && <p className="error">{error}</p>}
-
-        {movie && !loading && (
-          <MovieCard movie={movie}>
-            <Show when="signed-in">
-              <button className="watchlist-btn" onClick={addToWatchlist}>
-                + Watchlist
-              </button>
-            </Show>
-          </MovieCard>
-        )}
-      </main>
+      <Header user={auth.user} token={auth.token} login={auth.login} logout={auth.logout} />
+      <Routes>
+        <Route path="/" element={<HomePage user={auth.user} token={auth.token} />} />
+        <Route path="/watchlist" element={<WatchlistPage token={auth.token} />} />
+      </Routes>
     </div>
   )
 }

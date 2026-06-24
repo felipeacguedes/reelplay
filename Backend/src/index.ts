@@ -3,12 +3,40 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import { getRandomMovie, type MovieFilters } from './tmdb'
 import { registerRoutes } from './routes'
+import { generateToken } from './auth'
+import db from './db'
 
 const app = Fastify({ logger: true })
 
 async function main() {
   await app.register(cors, {
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'http://localhost:5174'],
+  })
+
+  // Login / cadastro por username
+  app.post('/auth/login', async (request, reply) => {
+    const { username } = request.body as { username: string }
+
+    if (!username || username.trim().length < 2) {
+      return reply.status(400).send({ error: 'Username deve ter ao menos 2 caracteres.' })
+    }
+
+    const clean = username.trim().toLowerCase()
+
+    let user = await db.user.findUnique({ where: { email: clean } })
+
+    if (!user) {
+      user = await db.user.create({
+        data: {
+          clerkId: clean,
+          email: clean,
+          name: username.trim(),
+        },
+      })
+    }
+
+    const token = generateToken(user.id)
+    return reply.send({ token, user: { id: user.id, name: user.name } })
   })
 
   // Rota pública — sortear filme
@@ -28,7 +56,7 @@ async function main() {
     return reply.send({ status: 'ok' })
   })
 
-  // Rotas autenticadas — histórico e watchlist
+  // Rotas autenticadas
   await registerRoutes(app)
 
   try {

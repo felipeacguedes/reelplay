@@ -1,52 +1,32 @@
-import { createClerkClient } from '@clerk/backend'
+import jwt from 'jsonwebtoken'
 import type { FastifyRequest, FastifyReply } from 'fastify'
 import db from './db'
 
-const clerk = createClerkClient({
-  secretKey: process.env.CLERK_SECRET_KEY,
-  publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
-})
+const JWT_SECRET = process.env.JWT_SECRET ?? 'reelplay-secret'
+
+export function generateToken(userId: string): string {
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '30d' })
+}
 
 export async function requireAuth(request: FastifyRequest, reply: FastifyReply) {
   const authHeader = request.headers.authorization
 
   if (!authHeader?.startsWith('Bearer ')) {
-    return reply.status(401).send({ error: 'Token não fornecido.' })
+    return reply.status(401).send({ error: 'Token nao fornecido.' })
   }
 
   const token = authHeader.split(' ')[1]!
 
   try {
-    const requestState = await clerk.authenticateRequest(
-      new Request(`http://localhost:3333${request.url}`, {
-        method: request.method,
-        headers: request.headers as HeadersInit,
-      }),
-      { headerToken: token }
-    )
-
-    if (!requestState.isSignedIn) {
-      return reply.status(401).send({ error: 'Não autenticado.' })
-    }
-
-    const clerkId = requestState.toAuth().userId!
-
-    let user = await db.user.findUnique({ where: { clerkId } })
+    const payload = jwt.verify(token, JWT_SECRET) as { userId: string }
+    const user = await db.user.findUnique({ where: { id: payload.userId } })
 
     if (!user) {
-      const clerkUser = await clerk.users.getUser(clerkId)
-      user = await db.user.create({
-        data: {
-          clerkId,
-          email: clerkUser.emailAddresses[0]?.emailAddress ?? '',
-          name: `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim(),
-        },
-      })
+      return reply.status(401).send({ error: 'Usuario nao encontrado.' })
     }
 
     ;(request as FastifyRequest & { user: typeof user }).user = user
-  } catch (err) {
-    console.error('Erro ao verificar token:', err)
-    return reply.status(401).send({ error: 'Token inválido.' })
+  } catch {
+    return reply.status(401).send({ error: 'Token invalido.' })
   }
 }
