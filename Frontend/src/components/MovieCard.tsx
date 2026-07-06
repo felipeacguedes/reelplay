@@ -6,7 +6,7 @@ interface Props {
   children?: ReactNode
 }
 
-const POSTER_BASE = 'https://image.tmdb.org/t/p/w342'
+const POSTER_BASE = 'https://image.tmdb.org/t/p/w500'
 
 function MovieCard({ movie, children }: Props) {
   const year = movie.release_date ? movie.release_date.slice(0, 4) : '—'

@@ -116,16 +116,6 @@ function HomePage({ user, token }: { user: AuthUser | null; token: string | null
 
   return (
     <main className="main">
-      <FilterPanel filters={filters} onChange={setFilters} />
-
-      <button
-        className="spin-btn"
-        onClick={fetchRandomMovie}
-        disabled={loading}
-      >
-        {loading ? 'Sorteando...' : '🎲 Sortear filme'}
-      </button>
-
       {error && <p className="error">{error}</p>}
 
       {movie && !loading && (
@@ -137,6 +127,16 @@ function HomePage({ user, token }: { user: AuthUser | null; token: string | null
           )}
         </MovieCard>
       )}
+
+      <FilterPanel filters={filters} onChange={setFilters} />
+
+      <button
+        className="spin-btn"
+        onClick={fetchRandomMovie}
+        disabled={loading}
+      >
+        {loading ? 'Sorteando...' : '🎲 Sortear filme'}
+      </button>
     </main>
   )
 }
