@@ -11,6 +11,7 @@ const app = Fastify({ logger: true })
 async function main() {
   await app.register(cors, {
     origin: ['http://localhost:5173', 'http://localhost:5174'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
   })
 
   // Login / cadastro por username
@@ -28,7 +29,6 @@ async function main() {
     if (!user) {
       user = await db.user.create({
         data: {
-          clerkId: clean,
           email: clean,
           name: username.trim(),
         },

@@ -21,6 +21,9 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
  
+# Local design notes
+DECISIONS.md
+
 # Editor
 .vscode/
 .idea/

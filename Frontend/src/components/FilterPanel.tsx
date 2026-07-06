@@ -18,6 +18,20 @@ const GENRES = [
   { id: '37', name: 'Faroeste' },
 ]
 
+const DECADES = [
+  { value: '', label: 'Qualquer' },
+  { value: '1930', label: "30's" },
+  { value: '1940', label: "40's" },
+  { value: '1950', label: "50's" },
+  { value: '1960', label: "60's" },
+  { value: '1970', label: "70's" },
+  { value: '1980', label: "80's" },
+  { value: '1990', label: "90's" },
+  { value: '2000', label: '2000s' },
+  { value: '2010', label: '2010s' },
+  { value: '2020', label: '2020s' },
+]
+
 interface Props {
   filters: Filters
   onChange: (filters: Filters) => void
@@ -62,27 +76,18 @@ function FilterPanel({ filters, onChange }: Props) {
       </div>
 
       <div className="filter-group">
-        <label htmlFor="yearFrom">Ano (de)</label>
-        <input
-          id="yearFrom"
-          type="number"
-          min="1900"
-          max="2025"
-          value={filters.yearFrom}
-          onChange={(e) => update('yearFrom', e.target.value)}
-        />
-      </div>
-
-      <div className="filter-group">
-        <label htmlFor="yearTo">Ano (até)</label>
-        <input
-          id="yearTo"
-          type="number"
-          min="1900"
-          max="2025"
-          value={filters.yearTo}
-          onChange={(e) => update('yearTo', e.target.value)}
-        />
+        <label htmlFor="decade">Década</label>
+        <select
+          id="decade"
+          value={filters.decade}
+          onChange={(e) => update('decade', e.target.value)}
+        >
+          {DECADES.map((d) => (
+            <option key={d.value} value={d.value}>
+              {d.label}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   )

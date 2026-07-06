@@ -21,8 +21,7 @@ export interface Movie {
 
 export interface Filters {
   genres: string
-  yearFrom: string
-  yearTo: string
+  decade: string
   minRating: string
 }
 
@@ -39,8 +38,7 @@ function HomePage({ user, token }: { user: AuthUser | null; token: string | null
   const [error, setError] = useState<string | null>(null)
   const [filters, setFilters] = useState<Filters>({
     genres: '',
-    yearFrom: '1990',
-    yearTo: '2024',
+    decade: '',
     minRating: '6',
   })
 
@@ -50,8 +48,12 @@ function HomePage({ user, token }: { user: AuthUser | null; token: string | null
 
     const params = new URLSearchParams()
     if (filters.genres) params.append('genres', filters.genres)
-    if (filters.yearFrom) params.append('yearFrom', filters.yearFrom)
-    if (filters.yearTo) params.append('yearTo', filters.yearTo)
+    if (filters.decade) {
+      const from = filters.decade
+      const to = String(Number(filters.decade) + 9)
+      params.append('yearFrom', from)
+      params.append('yearTo', to)
+    }
     if (filters.minRating) params.append('minRating', filters.minRating)
 
     try {
