@@ -20,7 +20,7 @@ export async function registerRoutes(app: FastifyInstance) {
   // ── Histórico ────────────────────────────────────────────
 
   // Salva um filme no histórico
-  app.post('/history', { preHandler: requireAuth }, async (request, reply) => {
+  app.post('/api/history', { preHandler: requireAuth }, async (request, reply) => {
     const { user } = request as UserRequest
     const { tmdbId, title, posterPath } = request.body as MovieBody
 
@@ -32,7 +32,7 @@ export async function registerRoutes(app: FastifyInstance) {
   })
 
   // Busca o histórico do usuário
-  app.get('/history', { preHandler: requireAuth }, async (request, reply) => {
+  app.get('/api/history', { preHandler: requireAuth }, async (request, reply) => {
     const { user } = request as UserRequest
 
     const history = await db.historyEntry.findMany({
@@ -47,7 +47,7 @@ export async function registerRoutes(app: FastifyInstance) {
   // ── Watchlist ─────────────────────────────────────────────
 
   // Adiciona à watchlist
-  app.post('/watchlist', { preHandler: requireAuth }, async (request, reply) => {
+  app.post('/api/watchlist', { preHandler: requireAuth }, async (request, reply) => {
     const { user } = request as UserRequest
     const { tmdbId, title, posterPath } = request.body as MovieBody
 
@@ -62,7 +62,7 @@ export async function registerRoutes(app: FastifyInstance) {
   })
 
   // Busca a watchlist do usuário
-  app.get('/watchlist', { preHandler: requireAuth }, async (request, reply) => {
+  app.get('/api/watchlist', { preHandler: requireAuth }, async (request, reply) => {
     const { user } = request as UserRequest
 
     const watchlist = await db.watchlistEntry.findMany({
@@ -74,7 +74,7 @@ export async function registerRoutes(app: FastifyInstance) {
   })
 
   // Remove da watchlist
-  app.delete('/watchlist/:tmdbId', { preHandler: requireAuth }, async (request, reply) => {
+  app.delete('/api/watchlist/:tmdbId', { preHandler: requireAuth }, async (request, reply) => {
     const { user } = request as UserRequest
     const { tmdbId } = request.params as { tmdbId: string }
 

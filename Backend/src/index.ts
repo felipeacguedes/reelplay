@@ -25,7 +25,7 @@ async function main() {
   })
 
   // Login / cadastro por username
-  app.post('/auth/login', async (request, reply) => {
+  app.post('/api/auth/login', async (request, reply) => {
     const { username } = request.body as { username: string }
 
     if (!username || username.trim().length < 2) {
@@ -50,7 +50,7 @@ async function main() {
   })
 
   // Rota pública — sortear filme
-  app.get('/random', async (request, reply) => {
+  app.get('/api/random', async (request, reply) => {
     const query = request.query as MovieFilters
     try {
       const movie = await getRandomMovie(query)
@@ -62,7 +62,7 @@ async function main() {
   })
 
   // Rota pública — health check
-  app.get('/health', async (_request, reply) => {
+  app.get('/api/health', async (_request, reply) => {
     return reply.send({ status: 'ok' })
   })
 
@@ -74,12 +74,12 @@ async function main() {
   await app.register(fastifyStatic, {
     root: publicDir,
     prefix: '/',
-    wildcard: false,
+    wildcard: true,
   })
 
-  // SPA fallback — tudo que não for API serve index.html
-  app.setNotFoundHandler(async (request, reply) => {
-    return reply.sendFile('index.html')
+  // SPA fallback — rotas do React Router servem index.html
+  app.setNotFoundHandler(async (_request, reply) => {
+    return reply.status(200).sendFile('index.html')
   })
 
   const port = Number(process.env.PORT) || 3333

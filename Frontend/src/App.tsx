@@ -33,7 +33,7 @@ export interface AuthUser {
   name: string | null
 }
 
-export const API = import.meta.env.VITE_API_URL || ''
+export const API = import.meta.env.VITE_API_URL || '/api'
 
 function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token: string | null; onMovieChange: (v: boolean) => void }) {
   const [movie, setMovie] = useState<Movie | null>(null)
