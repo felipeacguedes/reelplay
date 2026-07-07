@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, useNavigate, Link } from 'react-router-dom'
+import { Dices, Clapperboard, Plus } from 'lucide-react'
 import FilterPanel from './components/FilterPanel'
 import MovieCard from './components/MovieCard'
 import Header from './components/Header'
@@ -125,7 +126,7 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
         <MovieCard movie={movie}>
           {user && (
             <button className="watchlist-btn" onClick={addToWatchlist}>
-              + Watchlist
+              <Plus size={16} /> Watchlist
             </button>
           )}
         </MovieCard>
@@ -133,7 +134,7 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
 
       {!hasMovie && (
         <Link to="/" className="logo-link">
-          <h1 className="logo">🎬 Reelplay</h1>
+          <h1 className="logo"><Clapperboard size={32} /> Reelplay</h1>
         </Link>
       )}
       {!hasMovie && (
@@ -146,7 +147,7 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
           onClick={fetchRandomMovie}
           disabled={loading}
         >
-          {loading ? 'Sorteando...' : '🎲 Sortear filme'}
+          {loading ? 'Sorteando...' : <><Dices size={20} /> Sortear filme</>}
         </button>
       )}
 
@@ -158,7 +159,7 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
           onClick={fetchRandomMovie}
           disabled={loading}
         >
-          {loading ? 'Sorteando...' : '🎲 Sortear filme'}
+          {loading ? 'Sorteando...' : <><Dices size={20} /> Sortear filme</>}
         </button>
       )}
     </main>

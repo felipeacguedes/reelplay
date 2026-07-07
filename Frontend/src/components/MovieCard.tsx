@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
+import { Clapperboard, Calendar, Star, ThumbsUp, ExternalLink } from 'lucide-react'
 import type { Movie } from '../App'
 
 interface Props {
@@ -27,16 +28,16 @@ function MovieCard({ movie, children }: Props) {
           alt={`Poster de ${movie.title}`}
         />
       ) : (
-        <div className="movie-poster-placeholder">🎬</div>
+        <div className="movie-poster-placeholder"><Clapperboard size={48} /></div>
       )}
 
       <div className="movie-info">
         <h2 className="movie-title">{movie.title}</h2>
 
         <div className="movie-meta">
-          <span>📅 {year}</span>
-          <span className="movie-rating">⭐ {rating}</span>
-          <span>🗳️ {movie.vote_count.toLocaleString()} votos</span>
+          <span><Calendar size={14} /> {year}</span>
+          <span className="movie-rating"><Star size={14} /> {rating}</span>
+          <span><ThumbsUp size={14} /> {movie.vote_count.toLocaleString()}</span>
         </div>
 
         <p className="movie-overview">
@@ -56,7 +57,7 @@ function MovieCard({ movie, children }: Props) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Ver no TMDB →
+            Ver no TMDB <ExternalLink size={14} />
           </a>
           {children}
         </div>

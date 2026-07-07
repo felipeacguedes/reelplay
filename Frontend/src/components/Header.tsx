@@ -1,4 +1,5 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Clapperboard, Bookmark, User } from 'lucide-react'
 import type { AuthUser } from '../App'
 
 interface Props {
@@ -18,11 +19,11 @@ function Header({ user, logout, hasMovie }: Props) {
     return (
       <header className="header-top-right">
         <nav className="nav">
-          {user && <Link to="/watchlist" className="nav-link">📋 Watchlist</Link>}
+          {user && <Link to="/watchlist" className="nav-link"><Bookmark size={16} /> Watchlist</Link>}
           <div className="auth-area">
             {user ? (
               <div className="user-info">
-                <span className="username">👤 {user.name}</span>
+                <span className="username"><User size={16} /> {user.name}</span>
                 <button className="auth-btn" onClick={logout}>Sair</button>
               </div>
             ) : (
@@ -41,15 +42,15 @@ function Header({ user, logout, hasMovie }: Props) {
           <button className="back-btn" onClick={() => navigate(-1)}>←</button>
         )}
         <Link to="/" className="logo-link">
-          <h1 className="logo">🎬 Reelplay</h1>
+          <h1 className="logo"><Clapperboard size={26} /> Reelplay</h1>
         </Link>
       </div>
       <nav className="nav">
-        {user && <Link to="/watchlist" className="nav-link">📋 Watchlist</Link>}
+        {user && <Link to="/watchlist" className="nav-link"><Bookmark size={16} /> Watchlist</Link>}
         <div className="auth-area">
           {user ? (
             <div className="user-info">
-              <span className="username">👤 {user.name}</span>
+              <span className="username"><User size={16} /> {user.name}</span>
               <button className="auth-btn" onClick={logout}>Sair</button>
             </div>
           ) : (

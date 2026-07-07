@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Clapperboard, Bookmark, ExternalLink, Trash2 } from 'lucide-react'
 import { API } from '../App'
 
 interface WatchlistEntry {
@@ -59,7 +60,7 @@ function WatchlistPage({ token }: Props) {
 
   return (
     <main className="main">
-      <h2 className="section-title">📋 Minha Watchlist</h2>
+      <h2 className="section-title"><Bookmark size={20} /> Minha Watchlist</h2>
 
       {watchlist.length === 0 ? (
         <p className="empty-msg">Sua watchlist está vazia. Sorteie alguns filmes!</p>
@@ -74,7 +75,7 @@ function WatchlistPage({ token }: Props) {
                   className="watchlist-poster"
                 />
               ) : (
-                <div className="watchlist-poster-placeholder">🎬</div>
+                <div className="watchlist-poster-placeholder"><Clapperboard size={24} /></div>
               )}
               <div className="watchlist-info">
                 <p className="watchlist-title">{entry.title}</p>
@@ -84,13 +85,13 @@ function WatchlistPage({ token }: Props) {
                   rel="noopener noreferrer"
                   className="movie-link"
                 >
-                  Ver no TMDB →
+                  Ver no TMDB <ExternalLink size={12} />
                 </a>
                 <button
                   className="remove-btn"
                   onClick={() => removeFromWatchlist(entry.tmdbId)}
                 >
-                  Remover
+                  <Trash2 size={14} /> Remover
                 </button>
               </div>
             </div>
