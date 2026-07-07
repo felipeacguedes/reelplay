@@ -9,38 +9,46 @@ App full-stack para sortear filmes aleatórios da TMDB.
 
 ### Layout
 - Filtros centralizados, collapsíveis com botão "Filtros ▼" (chevron animado)
-- MovieCard vertical (capa grande em cima, info abaixo, separador entre eles)
-- Card reduzido de 520px → 420px
-- Navbar com logo à esquerda, watchlist + auth à direita (só aparece com filme ou em outras páginas)
-- Header compacto (só login/watchlist) no canto superior direito quando sem filme
-- Logo centralizado grande (2.8rem, Clapperboard size 40) na home sem filme
-- Tagline removida
-- Botão "Sortear filme" entre o conteúdo (logo/card) e os filtros
-- Gradiente preto e branco no botão com brilho (box-shadow branco)
+- MovieCard vertical com poster solto (link próprio pro TMDB) e bloco de info separado
+- Poster reduzido, sem container de fundo (flutuante com sombra)
+- Fundo da página: radial-gradient (spotlight no centro)
+- Bloco de info com efeito vidro gelo (backdrop-filter, semi-transparente)
+- Navbar fixa no topo (64px), fundo semi-transparente com backdrop-filter
+- Header compacto (home vazia) também fixo, mesmo estilo da navbar
+- Logo grande centralizado na home sem filme (2.8rem)
+- Botão voltar com ícone ArrowLeft, sem borda, sempre ocupa espaço (visibility: hidden)
+- Botão "Sortear filme" entre conteúdo e filtros
+- Gradiente no botão com brilho (animação 4s ease-in-out)
+
+### Navegação
+- User menu: username vira botão, ao clicar abre dropdown com Watchlist + Sair
+- Mini menu estilizado com dropdown, fecha ao clicar fora
+- Botão "Entrar" estilizado com fundo semi-transparente
+
+### Watchlist
+- Grid 5 colunas com posters em prateleira
+- 15 filmes por página com paginação (botões numerados + setas)
+- Botão remover (lixeira) sempre visível no canto superior do poster
+- Nome do filme abaixo do poster
+- Overlay com nota do TMDB aparece no hover dentro do poster (fade)
+
+### Login
+- Página estilizada com vidro gelo (glassmorphism)
+- Logo Reelplay no topo, input semi-transparente, botão "Entrar" estilizado
+- Toast de notificação in-site (slide down, 3s) substitui alert()
+
+### Correções
+- Dropdown do Select abre pra cima se não houver espaço abaixo
+- Animação do Select sem translateY (só opacity) pra não conflitar com posicionamento
+- overflow: hidden no wrapper de filtros pra evitar vazamento visual
 
 ### Ícones (lucide-react)
-- Clapperboard (logo, placeholders)
-- Bookmark (watchlist)
-- User (username)
-- Dices (sortear)
-- Calendar (ano), Star (rating), ThumbsUp (votos)
-- ExternalLink (TMDB), Plus (watchlist), Trash2 (remover)
-- ChevronDown (toggle filtros)
+- Clapperboard, Bookmark, User, Dices, Calendar, Star, ThumbsUp, ExternalLink, Plus, Trash2, ChevronDown, ArrowLeft, LogOut, Check, AlertCircle, ChevronLeft, ChevronRight
 
-### Dropdown customizado (Select.tsx)
-- Trigger estilizado com chevron animado
-- Menu position: fixed com coordenadas via getBoundingClientRect
-- Scrollbar estilizada (6px, #444)
-- Suporte a renderValue e renderOption para customização
-- Rating filter usa Star icon (fill dourado quando selecionado)
-
-### Animações
-- Filtros expandem com max-height + opacity (0.35s)
-- Dropdown fadeIn + translateY (0.15s)
-- Loading do botão: gradiente animado com vermelho → amarelo → azul → verde (2s loop)
-
-### Reset
-- Clicar no logo da navbar reseta o estado (homeKey incrementa, força remount do HomePage)
+### Cores padrão
+- Texto dourado (#f5c518) para links/acções (Ler mais, Ver no TMDB, nota)
+- Fundo escuro com gradiente
+- Botões e inputs semi-transparentes
 
 ### Backend
 - Rotas: /random, /auth/login, /health, /history, /watchlist
@@ -52,7 +60,7 @@ App full-stack para sortear filmes aleatórios da TMDB.
 - [ ] Mover JWT_SECRET para .env sem fallback
 - [ ] Validar inputs (zod)
 - [ ] Rate limiting
-- [ ] Tratar 401 no frontend
+- [x] Tratar 401 no frontend
 - [ ] Senha com bcrypt ou Clerk
 - [ ] Testes automatizados
-- [ ] Poster com efeito tilt/parallax ao passar o mouse (usar vanilla-tilt ou similar)
+- [ ] Poster com efeito tilt/parallax ao passar o mouse (vanilla-tilt ou similar)

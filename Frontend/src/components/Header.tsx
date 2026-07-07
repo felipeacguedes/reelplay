@@ -15,7 +15,7 @@ function Header({ user, logout, hasMovie, onHome }: Props) {
   const navigate = useNavigate()
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const showFull = !isHome || hasMovie
+  const showNavbar = !isHome || hasMovie
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -47,7 +47,7 @@ function Header({ user, logout, hasMovie, onHome }: Props) {
     </div>
   ) : null
 
-  if (!showFull) {
+  if (!showNavbar) {
     return (
       <header className="header-top-right">
         <nav className="nav">
@@ -63,9 +63,12 @@ function Header({ user, logout, hasMovie, onHome }: Props) {
   return (
     <header className="navbar">
       <div className="navbar-left">
-        {(!isHome || hasMovie) && (
-          <button className="back-btn" onClick={() => isHome ? onHome?.() : navigate(-1)}><ArrowLeft size={16} /></button>
-        )}
+        <button
+          className={`back-btn ${(!isHome || hasMovie) ? '' : 'back-btn--hidden'}`}
+          onClick={() => isHome ? onHome?.() : navigate(-1)}
+        >
+          <ArrowLeft size={16} />
+        </button>
         <a href="/" className="logo-link" onClick={(e) => { e.preventDefault(); onHome?.(); }}>
           <h1 className="logo"><Clapperboard size={26} /> Reelplay</h1>
         </a>

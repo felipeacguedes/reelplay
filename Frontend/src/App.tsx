@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, useNavigate, Link } from 'react-router-dom'
 import { Dices, Clapperboard, Plus, ChevronDown } from 'lucide-react'
+import { apiFetch, onUnauthorized } from './api'
 import FilterPanel from './components/FilterPanel'
 import MovieCard from './components/MovieCard'
 import Header from './components/Header'
@@ -44,6 +45,19 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
     minRating: '',
   })
 
+  const hasMovie = movie && !loading
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.code === 'Space' && !loading) {
+        e.preventDefault()
+        fetchRandomMovie()
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [loading])
+
   async function fetchRandomMovie() {
     setLoading(true)
     setError(null)
@@ -69,12 +83,10 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
       onMovieChange(true)
 
       if (token) {
-        await fetch(`${API}/history`, {
+        await apiFetch(`${API}/history`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
+          token,
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             tmdbId: data.id,
             title: data.title,
@@ -93,12 +105,10 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
     if (!movie || !token) return
 
     try {
-      const res = await fetch(`${API}/watchlist`, {
+      const res = await apiFetch(`${API}/watchlist`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        token,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tmdbId: movie.id,
           title: movie.title,
@@ -117,7 +127,6 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
     }
   }
 
-  const hasMovie = movie && !loading
   const [showFilters, setShowFilters] = useState(false)
 
   return (
@@ -136,7 +145,7 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
 
       {!hasMovie && (
         <Link to="/" className="logo-link">
-          <h1 className="logo"><Clapperboard size={40} /> Reelplay</h1>
+          <h1 className="logo logo--center"><Clapperboard size={40} /> Reelplay</h1>
         </Link>
       )}
 
@@ -147,6 +156,7 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
       >
         {loading ? 'Sorteando...' : <><Dices size={20} /> Sortear filme</>}
       </button>
+      <span className="spin-hint">(Space)</span>
 
       <button
         className="filters-toggle"
@@ -181,6 +191,17 @@ function App() {
       setUser(JSON.parse(savedUser) as AuthUser)
     }
   }, [])
+
+  useEffect(() => {
+    return onUnauthorized(() => {
+      setUser(null)
+      setToken(null)
+      localStorage.removeItem('reelplay_token')
+      localStorage.removeItem('reelplay_user')
+      showToast('Sessão expirada. Faça login novamente.', 'error')
+      navigate('/login')
+    })
+  }, [navigate])
 
   function handleLogin(newUser: AuthUser, newToken: string) {
     setUser(newUser)
