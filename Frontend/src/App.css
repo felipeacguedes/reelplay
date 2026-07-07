@@ -698,7 +698,7 @@ body {
 
 .shelf-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   width: 100%;
 }
@@ -764,23 +764,19 @@ body {
   background: rgba(0, 0, 0, 0.6);
   border: none;
   color: #aaa;
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s, color 0.2s;
-}
-
-.shelf-item:hover .shelf-remove {
-  opacity: 1;
+  transition: color 0.2s, background 0.2s;
 }
 
 .shelf-remove:hover {
   color: #e50914;
+  background: rgba(0, 0, 0, 0.8);
 }
 
 /* Login page */
