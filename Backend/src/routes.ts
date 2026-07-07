@@ -14,7 +14,6 @@ interface MovieBody {
   tmdbId: number
   title: string
   posterPath?: string
-  voteAverage?: number
 }
 
 export async function registerRoutes(app: FastifyInstance) {
@@ -50,11 +49,11 @@ export async function registerRoutes(app: FastifyInstance) {
   // Adiciona à watchlist
   app.post('/watchlist', { preHandler: requireAuth }, async (request, reply) => {
     const { user } = request as UserRequest
-    const { tmdbId, title, posterPath, voteAverage } = request.body as MovieBody
+    const { tmdbId, title, posterPath } = request.body as MovieBody
 
     try {
       const entry = await db.watchlistEntry.create({
-        data: { userId: user.id, tmdbId, title, posterPath, voteAverage },
+        data: { userId: user.id, tmdbId, title, posterPath },
       })
       return reply.status(201).send(entry)
     } catch {

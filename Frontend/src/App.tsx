@@ -103,7 +103,6 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
           tmdbId: movie.id,
           title: movie.title,
           posterPath: movie.poster_path,
-          voteAverage: movie.vote_average,
         }),
       })
 

@@ -29,15 +29,14 @@ model HistoryEntry {
 }
 
 model WatchlistEntry {
-  id          String   @id @default(cuid())
-  userId      String
-  tmdbId      Int
-  title       String
-  posterPath  String?
-  voteAverage Float?
-  addedAt     DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  tmdbId     Int
+  title      String
+  posterPath String?
+  addedAt    DateTime @default(now())
 
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tmdbId])
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Clapperboard } from 'lucide-react'
 import { API } from '../App'
 import type { AuthUser } from '../App'
 
@@ -43,10 +44,11 @@ function LoginPage({ onLogin }: Props) {
   return (
     <main className="login-page">
       <div className="login-box">
+        <h1 className="login-title"><Clapperboard size={28} /> Reelplay</h1>
         <p className="login-subtitle">Digite seu username para entrar</p>
 
         <input
-          className="username-input"
+          className="login-input"
           type="text"
           placeholder="username"
           value={username}
@@ -58,7 +60,7 @@ function LoginPage({ onLogin }: Props) {
         {error && <p className="error">{error}</p>}
 
         <button
-          className="spin-btn"
+          className="login-btn"
           onClick={handleLogin}
           disabled={loading || !username.trim()}
         >

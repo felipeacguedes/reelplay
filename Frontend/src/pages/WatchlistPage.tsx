@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Clapperboard, Bookmark, ExternalLink, Trash2 } from 'lucide-react'
+import { Clapperboard, Bookmark, Trash2 } from 'lucide-react'
 import { API } from '../App'
+import { showToast } from '../components/Toast'
 
 interface WatchlistEntry {
   id: string
@@ -51,8 +52,9 @@ function WatchlistPage({ token }: Props) {
         headers: { Authorization: `Bearer ${token}` },
       })
       setWatchlist((prev) => prev.filter((e) => e.tmdbId !== tmdbId))
+      showToast('Removido da watchlist.')
     } catch {
-      alert('Erro ao remover da watchlist.')
+      showToast('Erro ao remover da watchlist.', 'error')
     }
   }
 
@@ -65,35 +67,34 @@ function WatchlistPage({ token }: Props) {
       {watchlist.length === 0 ? (
         <p className="empty-msg">Sua watchlist está vazia. Sorteie alguns filmes!</p>
       ) : (
-        <div className="watchlist-grid">
+        <div className="shelf-grid">
           {watchlist.map((entry) => (
-            <div key={entry.id} className="watchlist-item">
-              {entry.posterPath ? (
-                <img
-                  src={`${POSTER_BASE}${entry.posterPath}`}
-                  alt={entry.title}
-                  className="watchlist-poster"
-                />
-              ) : (
-                <div className="watchlist-poster-placeholder"><Clapperboard size={24} /></div>
-              )}
-              <div className="watchlist-info">
-                <p className="watchlist-title">{entry.title}</p>
-                <a
-                  href={`https://www.themoviedb.org/movie/${entry.tmdbId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="movie-link"
-                >
-                  Ver no TMDB <ExternalLink size={12} />
-                </a>
-                <button
-                  className="remove-btn"
-                  onClick={() => removeFromWatchlist(entry.tmdbId)}
-                >
-                  <Trash2 size={14} /> Remover
-                </button>
-              </div>
+            <div key={entry.id} className="shelf-item">
+              <a
+                href={`https://www.themoviedb.org/movie/${entry.tmdbId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shelf-poster-link"
+              >
+                {entry.posterPath ? (
+                  <img
+                    src={`${POSTER_BASE}${entry.posterPath}`}
+                    alt={entry.title}
+                    className="shelf-poster"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="shelf-poster-placeholder"><Clapperboard size={24} /></div>
+                )}
+              </a>
+              <p className="shelf-title">{entry.title}</p>
+              <button
+                className="shelf-remove"
+                onClick={() => removeFromWatchlist(entry.tmdbId)}
+                title="Remover"
+              >
+                <Trash2 size={12} />
+              </button>
             </div>
           ))}
         </div>
