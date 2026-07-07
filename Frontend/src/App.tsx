@@ -40,6 +40,7 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pullDist, setPullDist] = useState(0)
+  const [snapping, setSnapping] = useState(false)
   const touchRef = useRef({ startY: 0, pulling: false, dist: 0 })
 
   function handleTouchStart(e: React.TouchEvent) {
@@ -59,10 +60,16 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
 
   function handleTouchEnd() {
     if (touchRef.current.pulling && touchRef.current.dist >= 60) {
+      setSnapping(true)
       setPullDist(0)
-      fetchRandomMovie()
+      setTimeout(() => {
+        setSnapping(false)
+        fetchRandomMovie()
+      }, 300)
     } else {
+      setSnapping(true)
       setPullDist(0)
+      setTimeout(() => setSnapping(false), 300)
     }
     touchRef.current.pulling = false
     touchRef.current.dist = 0
@@ -165,8 +172,11 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div className={`pull-indicator ${pullDist > 0 ? 'pull-indicator--visible' : ''}`} style={{ transform: `translateX(-50%) translateY(${pullDist - 40}px)` }}>
-        {pullDist >= 60 ? 'Solte para sortear' : '↓ Puxe para sortear'}
+      <div
+        className={`pull-indicator ${pullDist > 0 || snapping ? 'pull-indicator--visible' : ''} ${pullDist >= 60 ? 'pull-indicator--ready' : ''} ${snapping ? 'pull-indicator--snap' : ''}`}
+        style={{ transform: `translateX(-50%) translateY(${pullDist - 40}px) scale(${pullDist > 0 || snapping ? 1 : 0.9})` }}
+      >
+        ↓ Puxe para sortear
       </div>
       {error && <p className="error">{error}</p>}
 
@@ -193,7 +203,8 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
       >
         {loading ? 'Sorteando...' : <><Dices size={20} /> Sortear filme</>}
       </button>
-      <span className="spin-hint">(Space)</span>
+      <span className="spin-hint spin-hint--space">(Space)</span>
+      <span className="spin-hint spin-hint--pull">(↓ Puxe)</span>
 
       <button
         className="filters-toggle"

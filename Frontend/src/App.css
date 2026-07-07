@@ -37,19 +37,37 @@ body {
 
 .pull-indicator {
   position: fixed;
-  top: 0;
+  top: 12px;
   left: 50%;
   z-index: 99;
-  color: #888;
+  color: #fff;
   font-size: 0.8rem;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.2s;
   white-space: nowrap;
+  background: rgba(20, 20, 30, 0.75);
+  backdrop-filter: blur(12px);
+  padding: 10px 22px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  will-change: transform, opacity;
+  transition: opacity 0.25s;
 }
 
 .pull-indicator--visible {
   opacity: 1;
+}
+
+.pull-indicator--ready {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.pull-indicator--snap {
+  transition: opacity 0.3s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Header — compact (top‑right, empty home) */
@@ -387,6 +405,10 @@ body {
   margin-bottom: 16px;
 }
 
+.spin-hint--pull {
+  display: none;
+}
+
 /* Erro */
 .error {
   text-align: center;
@@ -573,8 +595,12 @@ body {
     margin: 10px 0;
   }
 
-  .spin-hint {
+  .spin-hint--space {
     display: none;
+  }
+
+  .spin-hint--pull {
+    display: block;
   }
 
   .filters-toggle {
