@@ -20,15 +20,29 @@ function MovieCard({ movie, children }: Props) {
   const displayText = expanded || !isLong ? overview : overview.slice(0, MAX_LENGTH).trimEnd() + '…'
 
   return (
-    <div className="movie-card">
+    <>
       {movie.poster_path ? (
-        <img
-          className="movie-poster"
-          src={`${POSTER_BASE}${movie.poster_path}`}
-          alt={`Poster de ${movie.title}`}
-        />
+        <a
+          className="movie-poster-link"
+          href={`https://www.themoviedb.org/movie/${movie.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            className="movie-poster"
+            src={`${POSTER_BASE}${movie.poster_path}`}
+            alt={`Poster de ${movie.title}`}
+          />
+        </a>
       ) : (
-        <div className="movie-poster-placeholder"><Clapperboard size={48} /></div>
+        <a
+          className="movie-poster-link"
+          href={`https://www.themoviedb.org/movie/${movie.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div className="movie-poster-placeholder"><Clapperboard size={48} /></div>
+        </a>
       )}
 
       <div className="movie-info">
@@ -62,7 +76,7 @@ function MovieCard({ movie, children }: Props) {
           {children}
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

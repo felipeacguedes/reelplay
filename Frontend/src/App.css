@@ -9,7 +9,7 @@ svg {
 }
 
 body {
-  background: #0d0d0d;
+  background: radial-gradient(ellipse at 50% 30%, #1a1a2a, #0d0d0d 70%);
   color: #f0f0f0;
   font-family: 'Segoe UI', system-ui, sans-serif;
   min-height: 100vh;
@@ -352,27 +352,26 @@ body {
   font-size: 0.95rem;
 }
 
-/* Card do filme */
-.movie-card {
-  width: 100%;
-  max-width: 420px;
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  border-radius: 14px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  animation: fadeIn 0.3s ease;
-}
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.movie-poster-link {
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 24px;
+}
+
 .movie-poster {
   width: 100%;
+  max-width: 300px;
   display: block;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
 }
 
 .movie-poster-placeholder {
@@ -386,11 +385,17 @@ body {
 }
 
 .movie-info {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border-top: 1px solid #2a2a2a;
+  animation: fadeIn 0.3s ease;
 }
 
 .movie-title {
