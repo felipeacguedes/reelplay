@@ -158,9 +158,9 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
         />
       </button>
 
-      {showFilters && (
+      <div className={`filters-wrapper ${showFilters ? 'filters-wrapper--open' : ''}`}>
         <FilterPanel filters={filters} onChange={setFilters} />
-      )}
+      </div>
     </main>
   )
 }
