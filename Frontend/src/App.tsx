@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route, useNavigate, Link } from 'react-router-dom'
 import { Dices, Clapperboard, Plus, ChevronDown } from 'lucide-react'
 import { apiFetch, onUnauthorized } from './api'
@@ -39,41 +39,6 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
   const [movie, setMovie] = useState<Movie | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [pullDist, setPullDist] = useState(0)
-  const [snapping, setSnapping] = useState(false)
-  const touchRef = useRef({ startY: 0, pulling: false, dist: 0 })
-
-  function handleTouchStart(e: React.TouchEvent) {
-    if (window.scrollY > 0 || loading) return
-    touchRef.current.startY = e.touches[0].clientY
-    touchRef.current.pulling = true
-  }
-
-  function handleTouchMove(e: React.TouchEvent) {
-    if (!touchRef.current.pulling || loading) return
-    const dist = Math.min((e.touches[0].clientY - touchRef.current.startY) * 0.4, 100)
-    if (dist > 0) {
-      touchRef.current.dist = dist
-      setPullDist(dist)
-    }
-  }
-
-  function handleTouchEnd() {
-    if (touchRef.current.pulling && touchRef.current.dist >= 60) {
-      setSnapping(true)
-      setPullDist(0)
-      setTimeout(() => {
-        setSnapping(false)
-        fetchRandomMovie()
-      }, 300)
-    } else {
-      setSnapping(true)
-      setPullDist(0)
-      setTimeout(() => setSnapping(false), 300)
-    }
-    touchRef.current.pulling = false
-    touchRef.current.dist = 0
-  }
 
   const [filters, setFilters] = useState<Filters>({
     genres: '',
@@ -168,16 +133,7 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
   return (
     <main
       className={`main ${!hasMovie ? 'main--empty' : ''}`}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
     >
-      <div
-        className={`pull-indicator ${pullDist > 0 || snapping ? 'pull-indicator--visible' : ''} ${pullDist >= 60 ? 'pull-indicator--ready' : ''} ${snapping ? 'pull-indicator--snap' : ''}`}
-        style={{ transform: `translateX(-50%) translateY(${pullDist - 40}px) scale(${pullDist > 0 || snapping ? 1 : 0.9})` }}
-      >
-        ↓ Puxe para sortear
-      </div>
       {error && <p className="error">{error}</p>}
 
       {hasMovie && (
@@ -204,7 +160,6 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
         {loading ? 'Sorteando...' : <><Dices size={20} /> Sortear filme</>}
       </button>
       <span className="spin-hint spin-hint--space">(Space)</span>
-      <span className="spin-hint spin-hint--pull">(↓ Puxe)</span>
 
       <button
         className="filters-toggle"
