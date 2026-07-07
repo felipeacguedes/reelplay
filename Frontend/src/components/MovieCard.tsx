@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { ReactNode } from 'react'
 import type { Movie } from '../App'
 
@@ -7,10 +8,15 @@ interface Props {
 }
 
 const POSTER_BASE = 'https://image.tmdb.org/t/p/w500'
+const MAX_LENGTH = 150
 
 function MovieCard({ movie, children }: Props) {
+  const [expanded, setExpanded] = useState(false)
   const year = movie.release_date ? movie.release_date.slice(0, 4) : '—'
   const rating = movie.vote_average ? movie.vote_average.toFixed(1) : '—'
+  const overview = movie.overview || 'Sinopse não disponível.'
+  const isLong = overview.length > MAX_LENGTH
+  const displayText = expanded || !isLong ? overview : overview.slice(0, MAX_LENGTH).trimEnd() + '…'
 
   return (
     <div className="movie-card">
@@ -34,8 +40,14 @@ function MovieCard({ movie, children }: Props) {
         </div>
 
         <p className="movie-overview">
-          {movie.overview || 'Sinopse não disponível.'}
+          {displayText}
         </p>
+
+        {isLong && (
+          <button className="read-more-btn" onClick={() => setExpanded((e) => !e)}>
+            {expanded ? 'Mostrar menos' : 'Ler mais'}
+          </button>
+        )}
 
         <div className="movie-actions">
           <a

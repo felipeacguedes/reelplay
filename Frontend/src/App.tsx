@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, useNavigate, Link } from 'react-router-dom'
 import FilterPanel from './components/FilterPanel'
 import MovieCard from './components/MovieCard'
 import Header from './components/Header'
@@ -32,7 +32,7 @@ export interface AuthUser {
 
 export const API = 'http://localhost:3333'
 
-function HomePage({ user, token }: { user: AuthUser | null; token: string | null }) {
+function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token: string | null; onMovieChange: (v: boolean) => void }) {
   const [movie, setMovie] = useState<Movie | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -64,6 +64,7 @@ function HomePage({ user, token }: { user: AuthUser | null; token: string | null
       }
       const data = await res.json() as Movie
       setMovie(data)
+      onMovieChange(true)
 
       if (token) {
         await fetch(`${API}/history`, {
@@ -114,11 +115,13 @@ function HomePage({ user, token }: { user: AuthUser | null; token: string | null
     }
   }
 
+  const hasMovie = movie && !loading
+
   return (
-    <main className="main">
+    <main className={`main ${!hasMovie ? 'main--empty' : ''}`}>
       {error && <p className="error">{error}</p>}
 
-      {movie && !loading && (
+      {hasMovie && (
         <MovieCard movie={movie}>
           {user && (
             <button className="watchlist-btn" onClick={addToWatchlist}>
@@ -128,15 +131,36 @@ function HomePage({ user, token }: { user: AuthUser | null; token: string | null
         </MovieCard>
       )}
 
+      {!hasMovie && (
+        <Link to="/" className="logo-link">
+          <h1 className="logo">🎬 Reelplay</h1>
+        </Link>
+      )}
+      {!hasMovie && (
+        <p className="tagline">Seu próximo filme favorito, sorteado.</p>
+      )}
+
+      {hasMovie && (
+        <button
+          className="spin-btn"
+          onClick={fetchRandomMovie}
+          disabled={loading}
+        >
+          {loading ? 'Sorteando...' : '🎲 Sortear filme'}
+        </button>
+      )}
+
       <FilterPanel filters={filters} onChange={setFilters} />
 
-      <button
-        className="spin-btn"
-        onClick={fetchRandomMovie}
-        disabled={loading}
-      >
-        {loading ? 'Sorteando...' : '🎲 Sortear filme'}
-      </button>
+      {!hasMovie && (
+        <button
+          className="spin-btn"
+          onClick={fetchRandomMovie}
+          disabled={loading}
+        >
+          {loading ? 'Sorteando...' : '🎲 Sortear filme'}
+        </button>
+      )}
     </main>
   )
 }
@@ -144,6 +168,7 @@ function HomePage({ user, token }: { user: AuthUser | null; token: string | null
 function App() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [token, setToken] = useState<string | null>(null)
+  const [hasMovie, setHasMovie] = useState(false)
 
   useEffect(() => {
     const savedToken = localStorage.getItem('reelplay_token')
@@ -170,9 +195,9 @@ function App() {
 
   return (
     <div className="app">
-      <Header user={user} token={token} logout={handleLogout} />
+      <Header user={user} token={token} logout={handleLogout} hasMovie={hasMovie} />
       <Routes>
-        <Route path="/" element={<HomePage user={user} token={token} />} />
+        <Route path="/" element={<HomePage user={user} token={token} onMovieChange={setHasMovie} />} />
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route path="/watchlist" element={<WatchlistPage token={token} />} />
       </Routes>
