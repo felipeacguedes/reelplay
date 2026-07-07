@@ -327,11 +327,21 @@ body {
   transform: rotate(180deg);
 }
 
+@keyframes rainbow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .spin-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.8;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
+  background: linear-gradient(90deg, #e50914, #ffed00, #00b0ff, #00e676, #e50914);
+  background-size: 300% 100%;
+  animation: rainbow 2s linear infinite;
+  border-color: transparent;
 }
 
 /* Erro */

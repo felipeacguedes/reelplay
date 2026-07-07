@@ -169,6 +169,7 @@ function App() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [hasMovie, setHasMovie] = useState(false)
+  const [homeKey, setHomeKey] = useState(0)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -196,6 +197,7 @@ function App() {
 
   function handleGoHome() {
     setHasMovie(false)
+    setHomeKey((k) => k + 1)
     navigate('/')
   }
 
@@ -203,7 +205,7 @@ function App() {
     <div className="app">
       <Header user={user} token={token} logout={handleLogout} hasMovie={hasMovie} onHome={handleGoHome} />
       <Routes>
-        <Route path="/" element={<HomePage user={user} token={token} onMovieChange={setHasMovie} />} />
+        <Route path="/" element={<HomePage key={homeKey} user={user} token={token} onMovieChange={setHasMovie} />} />
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route path="/watchlist" element={<WatchlistPage token={token} />} />
       </Routes>
