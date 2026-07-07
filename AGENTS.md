@@ -55,3 +55,4 @@ App full-stack para sortear filmes aleatórios da TMDB.
 - [ ] Tratar 401 no frontend
 - [ ] Senha com bcrypt ou Clerk
 - [ ] Testes automatizados
+- [ ] Poster com efeito tilt/parallax ao passar o mouse (usar vanilla-tilt ou similar)

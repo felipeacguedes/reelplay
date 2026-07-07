@@ -40,7 +40,7 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
   const [filters, setFilters] = useState<Filters>({
     genres: '',
     decade: '',
-    minRating: '6',
+    minRating: '',
   })
 
   async function fetchRandomMovie() {

@@ -35,11 +35,22 @@ function Select({ value, options, onChange, placeholder, renderValue, renderOpti
   function toggle() {
     if (!open && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect()
-      setMenuStyle({
-        top: rect.bottom + 6,
-        left: rect.left,
-        width: rect.width,
-      })
+      const spaceBelow = window.innerHeight - rect.bottom
+      const menuHeight = 280
+      if (spaceBelow < menuHeight) {
+        setMenuStyle({
+          top: rect.top - 6,
+          left: rect.left,
+          width: rect.width,
+          transform: 'translateY(-100%)',
+        })
+      } else {
+        setMenuStyle({
+          top: rect.bottom + 6,
+          left: rect.left,
+          width: rect.width,
+        })
+      }
     }
     setOpen((v) => !v)
   }

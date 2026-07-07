@@ -116,6 +116,7 @@ body {
   letter-spacing: 0.06em;
   color: #666;
   font-weight: 600;
+  text-align: center;
 }
 
 .filter-group input {
@@ -200,14 +201,8 @@ body {
 }
 
 @keyframes selectFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .custom-select__option {
