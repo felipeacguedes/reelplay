@@ -335,7 +335,7 @@ body {
   box-shadow: 0 0 24px rgba(255, 255, 255, 0.15);
   background: linear-gradient(90deg, #e50914, #ffed00, #00b0ff, #00e676, #e50914);
   background-size: 300% 100%;
-  animation: rainbow 2s linear infinite;
+  animation: rainbow 4s ease-in-out infinite;
   border-color: transparent;
 }
 
@@ -363,7 +363,6 @@ body {
 
 .movie-poster {
   width: 100%;
-  max-width: 300px;
   display: block;
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
@@ -430,7 +429,7 @@ body {
 .read-more-btn {
   background: transparent;
   border: none;
-  color: #e50914;
+  color: #f5c518;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -440,7 +439,7 @@ body {
 }
 
 .read-more-btn:hover {
-  color: #f50d1a;
+  color: #ffd633;
 }
 
 .movie-actions {
@@ -455,13 +454,14 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: #e50914;
+  color: #f5c518;
   font-size: 0.85rem;
   text-decoration: none;
   font-weight: 500;
 }
 
 .movie-link:hover {
+  color: #ffd633;
   text-decoration: underline;
 }
 
