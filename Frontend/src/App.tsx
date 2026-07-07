@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Routes, Route, useNavigate, Link } from 'react-router-dom'
 import { Dices, Clapperboard, Plus, ChevronDown } from 'lucide-react'
 import { apiFetch, onUnauthorized } from './api'
@@ -39,6 +39,35 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
   const [movie, setMovie] = useState<Movie | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [pullDist, setPullDist] = useState(0)
+  const touchRef = useRef({ startY: 0, pulling: false, dist: 0 })
+
+  function handleTouchStart(e: React.TouchEvent) {
+    if (window.scrollY > 0 || loading) return
+    touchRef.current.startY = e.touches[0].clientY
+    touchRef.current.pulling = true
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    if (!touchRef.current.pulling || loading) return
+    const dist = Math.min((e.touches[0].clientY - touchRef.current.startY) * 0.4, 100)
+    if (dist > 0) {
+      touchRef.current.dist = dist
+      setPullDist(dist)
+    }
+  }
+
+  function handleTouchEnd() {
+    if (touchRef.current.pulling && touchRef.current.dist >= 60) {
+      setPullDist(0)
+      fetchRandomMovie()
+    } else {
+      setPullDist(0)
+    }
+    touchRef.current.pulling = false
+    touchRef.current.dist = 0
+  }
+
   const [filters, setFilters] = useState<Filters>({
     genres: '',
     decade: '',
@@ -130,7 +159,15 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
   const [showFilters, setShowFilters] = useState(false)
 
   return (
-    <main className={`main ${!hasMovie ? 'main--empty' : ''}`}>
+    <main
+      className={`main ${!hasMovie ? 'main--empty' : ''}`}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div className={`pull-indicator ${pullDist > 0 ? 'pull-indicator--visible' : ''}`} style={{ transform: `translateX(-50%) translateY(${pullDist - 40}px)` }}>
+        {pullDist >= 60 ? 'Solte para sortear' : '↓ Puxe para sortear'}
+      </div>
       {error && <p className="error">{error}</p>}
 
       {hasMovie && (

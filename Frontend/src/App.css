@@ -35,6 +35,23 @@ body {
   justify-content: center;
 }
 
+.pull-indicator {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  z-index: 99;
+  color: #888;
+  font-size: 0.8rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.pull-indicator--visible {
+  opacity: 1;
+}
+
 /* Header — compact (top‑right, empty home) */
 .header-top-right {
   position: fixed;
@@ -46,9 +63,9 @@ body {
   justify-content: flex-end;
   height: 64px;
   padding: 0 32px;
-  background: rgba(13, 13, 13, 0.85);
+  background: rgba(13, 13, 13, 0.5);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   left: 0;
 }
 
@@ -64,9 +81,9 @@ body {
   justify-content: space-between;
   padding: 0 32px;
   height: 64px;
-  background: rgba(13, 13, 13, 0.85);
+  background: rgba(13, 13, 13, 0.5);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .navbar-left {
@@ -270,8 +287,8 @@ body {
 /* Botão sortear */
 .spin-btn {
   width: 100%;
-  max-width: 360px;
-  padding: 16px 24px;
+  max-width: 280px;
+  padding: 14px 20px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -499,6 +516,156 @@ body {
 @media (max-width: 540px) {
   .filters {
     grid-template-columns: 1fr;
+  }
+
+  .app {
+    padding: 72px 12px 16px;
+  }
+
+  .navbar,
+  .header-top-right {
+    padding: 0 16px;
+    height: 56px;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    gap: 6px;
+  }
+
+  .logo--center {
+    font-size: 2rem;
+  }
+
+  .logo svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .logo--center svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .back-btn {
+    padding: 4px;
+  }
+
+  .nav {
+    gap: 10px;
+  }
+
+  .auth-btn,
+  .user-menu__trigger {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .user-menu__dropdown {
+    min-width: 140px;
+    right: -4px;
+  }
+
+  .spin-btn {
+    max-width: 240px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    margin: 10px 0;
+  }
+
+  .spin-hint {
+    display: none;
+  }
+
+  .filters-toggle {
+    font-size: 0.8rem;
+    padding: 6px 0;
+    margin-bottom: 12px;
+  }
+
+  .filters-wrapper--open {
+    max-height: 400px;
+  }
+
+  .movie-poster-link {
+    max-width: 280px;
+    margin-bottom: 16px;
+  }
+
+  .movie-info {
+    max-width: 100%;
+    padding: 14px;
+    gap: 8px;
+  }
+
+  .movie-title {
+    font-size: 1.05rem;
+  }
+
+  .movie-meta {
+    font-size: 0.8rem;
+    gap: 10px;
+  }
+
+  .movie-overview {
+    font-size: 0.85rem;
+  }
+
+  .shelf-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .shelf-poster-link {
+    max-width: 100%;
+  }
+
+  .shelf-title {
+    font-size: 0.6rem;
+    margin-top: 4px;
+  }
+
+  .shelf-remove {
+    width: 24px;
+    height: 24px;
+    top: 2px;
+    right: 2px;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+  }
+
+  .login-box {
+    max-width: 320px;
+    padding: 28px 24px;
+  }
+
+  .login-title {
+    font-size: 1.3rem;
+  }
+
+  .login-input {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+
+  .login-btn {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .pagination {
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .page-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
   }
 }
 
