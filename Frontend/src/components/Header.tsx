@@ -7,9 +7,10 @@ interface Props {
   token: string | null
   logout: () => void
   hasMovie?: boolean
+  onHome?: () => void
 }
 
-function Header({ user, logout, hasMovie }: Props) {
+function Header({ user, logout, hasMovie, onHome }: Props) {
   const navigate = useNavigate()
   const location = useLocation()
   const isHome = location.pathname === '/'
@@ -41,9 +42,9 @@ function Header({ user, logout, hasMovie }: Props) {
         {!isHome && (
           <button className="back-btn" onClick={() => navigate(-1)}>←</button>
         )}
-        <Link to="/" className="logo-link">
+        <a href="/" className="logo-link" onClick={(e) => { e.preventDefault(); onHome?.(); }}>
           <h1 className="logo"><Clapperboard size={26} /> Reelplay</h1>
-        </Link>
+        </a>
       </div>
       <nav className="nav">
         {user && <Link to="/watchlist" className="nav-link"><Bookmark size={16} /> Watchlist</Link>}

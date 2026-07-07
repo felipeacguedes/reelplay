@@ -134,11 +134,8 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
 
       {!hasMovie && (
         <Link to="/" className="logo-link">
-          <h1 className="logo"><Clapperboard size={32} /> Reelplay</h1>
+          <h1 className="logo"><Clapperboard size={40} /> Reelplay</h1>
         </Link>
-      )}
-      {!hasMovie && (
-        <p className="tagline">Seu próximo filme favorito, sorteado.</p>
       )}
 
       {hasMovie && (
@@ -170,6 +167,7 @@ function App() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [hasMovie, setHasMovie] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const savedToken = localStorage.getItem('reelplay_token')
@@ -194,9 +192,14 @@ function App() {
     localStorage.removeItem('reelplay_user')
   }
 
+  function handleGoHome() {
+    setHasMovie(false)
+    navigate('/')
+  }
+
   return (
     <div className="app">
-      <Header user={user} token={token} logout={handleLogout} hasMovie={hasMovie} />
+      <Header user={user} token={token} logout={handleLogout} hasMovie={hasMovie} onHome={handleGoHome} />
       <Routes>
         <Route path="/" element={<HomePage user={user} token={token} onMovieChange={setHasMovie} />} />
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
