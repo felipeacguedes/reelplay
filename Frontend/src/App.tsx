@@ -4,6 +4,7 @@ import { Dices, Clapperboard, Plus, ChevronDown } from 'lucide-react'
 import FilterPanel from './components/FilterPanel'
 import MovieCard from './components/MovieCard'
 import Header from './components/Header'
+import Toast, { showToast } from './components/Toast'
 import WatchlistPage from './pages/WatchlistPage'
 import LoginPage from './pages/LoginPage'
 import './App.css'
@@ -102,17 +103,18 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
           tmdbId: movie.id,
           title: movie.title,
           posterPath: movie.poster_path,
+          voteAverage: movie.vote_average,
         }),
       })
 
       if (res.status === 409) {
-        alert('Filme já está na sua watchlist.')
+        showToast('Filme já está na sua watchlist.', 'error')
         return
       }
 
-      alert('Adicionado à watchlist!')
+      showToast('Adicionado à watchlist!')
     } catch {
-      alert('Erro ao adicionar à watchlist.')
+      showToast('Erro ao adicionar à watchlist.', 'error')
     }
   }
 
@@ -203,6 +205,7 @@ function App() {
 
   return (
     <div className="app">
+      <Toast />
       <Header user={user} token={token} logout={handleLogout} hasMovie={hasMovie} onHome={handleGoHome} />
       <Routes>
         <Route path="/" element={<HomePage key={homeKey} user={user} token={token} onMovieChange={setHasMovie} />} />
