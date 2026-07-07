@@ -1,6 +1,8 @@
 import 'dotenv/config'
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
+import fastifyStatic from '@fastify/static'
+import path from 'node:path'
 import { getRandomMovie, type MovieFilters } from './tmdb'
 import { registerRoutes } from './routes'
 import { generateToken } from './auth'
@@ -9,9 +11,17 @@ import db from './db'
 const app = Fastify({ logger: true })
 
 async function main() {
+  const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https://reelplay.up.railway.app',
+    ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+  ]
+
   await app.register(cors, {
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 
   // Login / cadastro por username
@@ -59,9 +69,26 @@ async function main() {
   // Rotas autenticadas
   await registerRoutes(app)
 
+  // Servir frontend buildado
+  const publicDir = path.join(process.cwd(), 'public')
+  await app.register(fastifyStatic, {
+    root: publicDir,
+    prefix: '/',
+    wildcard: false,
+  })
+
+  // SPA fallback — tudo que não for API serve index.html
+  app.setNotFoundHandler(async (request, reply) => {
+    if (request.url.startsWith('/auth') || request.url.startsWith('/random') || request.url.startsWith('/health') || request.url.startsWith('/history') || request.url.startsWith('/watchlist')) {
+      return reply.status(404).send({ error: 'Rota não encontrada.' })
+    }
+    return reply.sendFile('index.html')
+  })
+
+  const port = Number(process.env.PORT) || 3333
   try {
-    await app.listen({ port: 3333, host: '0.0.0.0' })
-    console.log('🎬 Reelplay backend rodando em http://localhost:3333')
+    await app.listen({ port, host: '0.0.0.0' })
+    console.log(`🎬 Reelplay backend rodando em http://localhost:${port}`)
   } catch (err) {
     app.log.error(err)
     process.exit(1)

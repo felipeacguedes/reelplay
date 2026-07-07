@@ -33,7 +33,7 @@ export interface AuthUser {
   name: string | null
 }
 
-export const API = 'http://localhost:3333'
+export const API = import.meta.env.VITE_API_URL || ''
 
 function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token: string | null; onMovieChange: (v: boolean) => void }) {
   const [movie, setMovie] = useState<Movie | null>(null)
