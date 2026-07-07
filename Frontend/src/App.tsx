@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, useNavigate, Link } from 'react-router-dom'
-import { Dices, Clapperboard, Plus } from 'lucide-react'
+import { Dices, Clapperboard, Plus, ChevronDown } from 'lucide-react'
 import FilterPanel from './components/FilterPanel'
 import MovieCard from './components/MovieCard'
 import Header from './components/Header'
@@ -117,6 +117,7 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
   }
 
   const hasMovie = movie && !loading
+  const [showFilters, setShowFilters] = useState(false)
 
   return (
     <main className={`main ${!hasMovie ? 'main--empty' : ''}`}>
@@ -138,26 +139,27 @@ function HomePage({ user, token, onMovieChange }: { user: AuthUser | null; token
         </Link>
       )}
 
-      {hasMovie && (
-        <button
-          className="spin-btn"
-          onClick={fetchRandomMovie}
-          disabled={loading}
-        >
-          {loading ? 'Sorteando...' : <><Dices size={20} /> Sortear filme</>}
-        </button>
-      )}
+      <button
+        className="spin-btn"
+        onClick={fetchRandomMovie}
+        disabled={loading}
+      >
+        {loading ? 'Sorteando...' : <><Dices size={20} /> Sortear filme</>}
+      </button>
 
-      <FilterPanel filters={filters} onChange={setFilters} />
+      <button
+        className="filters-toggle"
+        onClick={() => setShowFilters((v) => !v)}
+      >
+        Filtros
+        <ChevronDown
+          size={16}
+          className={`chevron ${showFilters ? 'chevron--up' : ''}`}
+        />
+      </button>
 
-      {!hasMovie && (
-        <button
-          className="spin-btn"
-          onClick={fetchRandomMovie}
-          disabled={loading}
-        >
-          {loading ? 'Sorteando...' : <><Dices size={20} /> Sortear filme</>}
-        </button>
+      {showFilters && (
+        <FilterPanel filters={filters} onChange={setFilters} />
       )}
     </main>
   )
