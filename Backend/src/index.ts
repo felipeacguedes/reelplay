@@ -79,9 +79,6 @@ async function main() {
 
   // SPA fallback — tudo que não for API serve index.html
   app.setNotFoundHandler(async (request, reply) => {
-    if (request.url.startsWith('/auth') || request.url.startsWith('/random') || request.url.startsWith('/health') || request.url.startsWith('/history') || request.url.startsWith('/watchlist')) {
-      return reply.status(404).send({ error: 'Rota não encontrada.' })
-    }
     return reply.sendFile('index.html')
   })
 
