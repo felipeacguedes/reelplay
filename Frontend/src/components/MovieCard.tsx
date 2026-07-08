@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
-import { Clapperboard, Calendar, Star, ThumbsUp, ExternalLink } from 'lucide-react'
+import { Clapperboard, Calendar, Star, ThumbsUp, ExternalLink, User } from 'lucide-react'
 import type { Movie } from '../App'
 
 interface Props {
@@ -53,6 +53,10 @@ function MovieCard({ movie, children }: Props) {
           <span className="movie-rating"><Star size={14} /> {rating}</span>
           <span><ThumbsUp size={14} /> {movie.vote_count.toLocaleString()}</span>
         </div>
+
+        {movie.director && (
+          <p className="movie-director"><User size={14} /> {movie.director}</p>
+        )}
 
         <p className="movie-overview">
           {displayText}

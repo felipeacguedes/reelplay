@@ -29,6 +29,7 @@ export interface Movie {
     vote_average: number;
     vote_count: number;
     genre_ids: number[];
+    director: string | null;
 }
 
 
@@ -83,6 +84,18 @@ export async function getRandomMovie(filters: MovieFilters): Promise<Movie> {
 
     if (!movie) {
         throw new Error("Nenhum filme encontrado na página sorteada.");
+    }
+
+    // busca diretor
+    try {
+        const credits = await tmdbClient.get<{ crew: { job: string; name: string }[] }>(
+            `/movie/${movie.id}/credits`,
+            { params: { language: filters.language ?? "pt-BR" } }
+        );
+        const director = credits.data.crew.find((c) => c.job === "Director");
+        movie.director = director?.name ?? null;
+    } catch {
+        movie.director = null;
     }
 
     return movie;
