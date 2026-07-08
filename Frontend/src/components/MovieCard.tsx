@@ -48,15 +48,15 @@ function MovieCard({ movie, children }: Props) {
       <div className="movie-info">
         <h2 className="movie-title">{movie.title}</h2>
 
+        {movie.director && (
+          <p className="movie-director"><User size={14} /> {movie.director}</p>
+        )}
+
         <div className="movie-meta">
           <span><Calendar size={14} /> {year}</span>
           <span className="movie-rating"><Star size={14} /> {rating}</span>
           <span><ThumbsUp size={14} /> {movie.vote_count.toLocaleString()}</span>
         </div>
-
-        {movie.director && (
-          <p className="movie-director"><User size={14} /> {movie.director}</p>
-        )}
 
         <p className="movie-overview">
           {displayText}
