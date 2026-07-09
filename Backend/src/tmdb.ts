@@ -34,8 +34,11 @@ export interface Movie {
 
 
 export async function getRandomMovie(filters: MovieFilters): Promise<Movie> {
+    const rating = filters.minRating ? Number(filters.minRating) : 0;
+    const isLowRating = rating > 0 && rating < 5;
+
     const params: Record<string, string> = {
-        sort_by: "popularity.desc",
+        sort_by: isLowRating ? "vote_average.asc" : "popularity.desc",
         include_adult: "false",
         include_video: "false",
         language: filters.language ?? "pt-BR",
@@ -45,8 +48,15 @@ export async function getRandomMovie(filters: MovieFilters): Promise<Movie> {
     if (filters.genres) params["with_genres"] = filters.genres;
     if (filters.yearFrom) params["primary_release_date.gte"] = `${filters.yearFrom}-01-01`;
     if (filters.yearTo) params["primary_release_date.lte"] = `${filters.yearTo}-12-31`;
-    if (filters.minRating) params["vote_average.gte"] = filters.minRating;
-    params["vote_count.gte"] = filters.minVotes ?? "100";
+    if (filters.minRating) {
+      params["vote_average.gte"] = filters.minRating;
+      if (rating <= 2) params["vote_count.gte"] = filters.minVotes ?? "5";
+      else if (rating <= 3) params["vote_count.gte"] = filters.minVotes ?? "10";
+      else if (rating <= 4) params["vote_count.gte"] = filters.minVotes ?? "50";
+      else params["vote_count.gte"] = filters.minVotes ?? "100";
+    } else {
+      params["vote_count.gte"] = filters.minVotes ?? "100";
+    }
 
     // primeiro, fazemos uma requisição para obter o número total de páginas disponíveis com os filtros aplicados
     
