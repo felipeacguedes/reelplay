@@ -29,3 +29,6 @@ AGENTS.md
 # Editor
 .vscode/
 .idea/
+
+# Railway config pull temp
+.railway-config-pull-*/
