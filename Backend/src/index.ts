@@ -34,12 +34,12 @@ async function main() {
 
     const clean = username.trim().toLowerCase()
 
-    let user = await db.user.findUnique({ where: { email: clean } })
+    let user = await db.user.findUnique({ where: { username: clean } })
 
     if (!user) {
       user = await db.user.create({
         data: {
-          email: clean,
+          username: clean,
           name: username.trim(),
         },
       })

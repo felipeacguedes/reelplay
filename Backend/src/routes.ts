@@ -5,7 +5,7 @@ import db from './db'
 interface UserRequest extends FastifyRequest {
   user: {
     id: string
-    email: string
+    username: string
     name: string | null
   }
 }
