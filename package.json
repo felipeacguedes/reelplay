@@ -2,7 +2,7 @@
   "name": "reelplay",
   "private": true,
   "scripts": {
-    "build": "cd Frontend && npm ci && npm run build && cd Backend && npm ci && npm run build",
+    "build": "cd Frontend && npm ci && npm run build && cd ../Backend && npm ci && npm run build",
     "start": "cd Backend && node dist/index.js"
   }
 }
